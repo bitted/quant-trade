@@ -139,6 +139,8 @@ public class CoreService implements Runnable {
 							if(buyLossratio > 10){
 								count = 1;
 								multiple = 2;
+							}else if(buyLossratio > -10) {
+								System.out.println("亏损不超过10%不翻倍!");
 							}else{
 								count *= multiple;
 								multiple -= span;
@@ -178,6 +180,8 @@ public class CoreService implements Runnable {
 							if(sellLossratio > 10){
 								count = 1;
 								multiple = 2;
+							}else if(sellLossratio > -10){
+								System.out.println("亏损不超过10%不翻倍!");
 							}else{
 								count *= multiple;
 								multiple -= span;
