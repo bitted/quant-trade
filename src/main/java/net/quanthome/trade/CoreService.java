@@ -1,7 +1,8 @@
 package net.quanthome.trade;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import net.quanthome.entity.OrderInfo;
 import net.quanthome.entity.Position;
@@ -60,7 +61,6 @@ public class CoreService implements Runnable {
 				
 				//判断是否在开仓时间段
 				if(openPositionTime()) {
-					System.out.println("不在开仓时间段，不开仓!"+startTime+","+endTime+","+new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒").format(new Date()));
 					this.tradeServiceImpl.slip(60000);//暂停1分钟
 					continue;
 				}
@@ -78,8 +78,12 @@ public class CoreService implements Runnable {
 		if(startTime==endTime) {
 			return false;
 		}
-		int hour = Integer.parseInt(new SimpleDateFormat("HH").format(new Date()));
+		SimpleDateFormat sdf = new SimpleDateFormat("HH");
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));//指定时区
+		int hour = Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
 		if(hour<startTime || hour>endTime) {
+			sdf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
+			System.out.println("不在开仓时间段，不开仓!"+startTime+","+endTime+","+sdf.format(Calendar.getInstance().getTime()));
 			return true;
 		}else {
 			return false;
