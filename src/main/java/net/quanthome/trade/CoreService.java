@@ -83,6 +83,7 @@ public class CoreService implements Runnable {
 		int hour = Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
 		if(hour<startTime || hour>endTime) {
 			sdf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
+			sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));//指定时区
 			System.out.println("不在开仓时间段，不开仓!"+startTime+","+endTime+","+sdf.format(Calendar.getInstance().getTime()));
 			return true;
 		}else {
