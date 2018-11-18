@@ -18,10 +18,11 @@ public class QuantTradeApplication {
 	    String amount = args[4];
 	    double backIncome = Double.valueOf(args[5]);
 	    boolean isDouble = Boolean.valueOf(args[6]);
-	    int startTime = Integer.valueOf(args[7]);
-	    int endTime = Integer.valueOf(args[8]);
+	    double span = Double.valueOf(args[7]);
+	    int startTime = Integer.valueOf(args[8]);
+	    int endTime = Integer.valueOf(args[9]);
 	    System.out.println(Arrays.toString(args));
-	    new Thread(new CoreService(apiKey, secretKey, symbol, amount, backIncome, isDouble, startTime, endTime)).start();
+	    new Thread(new CoreService(apiKey, secretKey, symbol, amount, backIncome, isDouble, span, startTime, endTime)).start();
 	}
 	
 }

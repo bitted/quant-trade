@@ -32,8 +32,10 @@ public class CoreService implements Runnable {
 	private int startTime = 1;
 	
 	private int endTime = 1;
+	
+	private double span = 0.1;
 
-	public CoreService(String api_key, String secret_key, String symbol, String amount, double backIncome, boolean isDouble, int startTime, int endTime) {
+	public CoreService(String api_key, String secret_key, String symbol, String amount, double backIncome, boolean isDouble, double span, int startTime, int endTime) {
 		this.quotServiceImpl = new QuotServiceImpl(symbol, CONTRACT_TYPE);
 		this.tradeServiceImpl = new TradeServiceImpl(api_key, secret_key, symbol, CONTRACT_TYPE);
 		this.amount = amount;
@@ -41,6 +43,7 @@ public class CoreService implements Runnable {
 		this.isDouble = isDouble;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.span = span;
 	}
 
 	public void run() {
@@ -83,6 +86,7 @@ public class CoreService implements Runnable {
 		int hour = Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
 		if(hour<startTime || hour>endTime) {
 			sdf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
+			sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));//指定时区
 			System.out.println("不在开仓时间段，不开仓!"+startTime+","+endTime+","+sdf.format(Calendar.getInstance().getTime()));
 			return true;
 		}else {
@@ -125,7 +129,8 @@ public class CoreService implements Runnable {
 								multiple = 2;
 							}else{
 								count *= multiple;
-								multiple -= 0.1;
+								multiple -= span;
+								multiple = multiple < 1 ? 1 : multiple;
 							}
 							System.out.println("平多仓成功，开空仓！");
 							last = this.quotServiceImpl.ticker().getLast();
@@ -154,7 +159,8 @@ public class CoreService implements Runnable {
 								multiple = 2;
 							}else{
 								count *= multiple;
-								multiple -= 0.1;
+								multiple -= span;
+								multiple = multiple < 1 ? 1 : multiple;
 							}
 							System.out.println("平空仓成功，开多仓！");
 							last = this.quotServiceImpl.ticker().getLast();
