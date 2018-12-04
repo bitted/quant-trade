@@ -36,6 +36,8 @@ public class CoreServiceNew implements Runnable {
 	private double span = 0.1;
 	
 	private double openRate = 4.0;
+	
+	private long orderDate = 0;
 
 	public CoreServiceNew(String api_key, String secret_key, String symbol, String contractType, String amount, double openRate, double backIncome, boolean isDouble, double span, int startTime, int endTime) {
 		this.quotServiceImpl = new QuotServiceImpl(symbol, contractType);
@@ -195,11 +197,13 @@ public class CoreServiceNew implements Runnable {
 				Kline kline = klines.get(0);
 				double low = Math.abs(kline.getOpen()-kline.getLow());
 				double higth = Math.abs(kline.getOpen()-kline.getHigh());
-				if(Math.round(low/kline.getOpen()*100)>=openRate) {
+				if(Math.round(low/kline.getOpen()*100)>=openRate && orderDate!=kline.getDate()) {
 					System.out.println("low="+low+",计算结果="+low/kline.getOpen()*100);
+					orderDate = kline.getDate();
 					return this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("2", last), isDouble?String.valueOf(count*Integer.valueOf(amount)):amount, "2");
-				}else if(Math.round(higth/kline.getOpen()*100)>=openRate) {
+				}else if(Math.round(higth/kline.getOpen()*100)>=openRate && orderDate!=kline.getDate()) {
 					System.out.println("higth="+higth+",计算结果="+higth/kline.getOpen()*100);
+					orderDate = kline.getDate();
 					return this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("1", last), isDouble?String.valueOf(count*Integer.valueOf(amount)):amount, "1");
 				}
 				this.quotServiceImpl.slip(1000*3);
