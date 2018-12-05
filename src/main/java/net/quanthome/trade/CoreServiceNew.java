@@ -67,8 +67,7 @@ public class CoreServiceNew implements Runnable {
 					this.tradeServiceImpl.slip(1000*60);//暂停1分钟
 					continue;
 				}
-				double last = this.quotServiceImpl.ticker().getLast();
-				String orderId = openPosition(last);
+				String orderId = openPosition();
 				System.out.println("首次开仓下单成功!");
 				orderMonitor(orderId);
 				System.out.println("首次开仓成功！");
@@ -140,8 +139,7 @@ public class CoreServiceNew implements Runnable {
 							if(openPositionTime()) {
 								break;
 							}
-							last = this.quotServiceImpl.ticker().getLast();
-							orderid = openPosition(last);
+							orderid = openPosition();
 							orderMonitor(orderid);
 							System.out.println("平多后开仓成功！");
 							monitorQuick();
@@ -169,8 +167,7 @@ public class CoreServiceNew implements Runnable {
 							if(openPositionTime()) {
 								break;
 							}
-							last = this.quotServiceImpl.ticker().getLast();
-							orderid = openPosition(last);
+							orderid = openPosition();
 							orderMonitor(orderid);
 							System.out.println("平空后开仓成功！");
 							monitorQuick();
@@ -189,7 +186,7 @@ public class CoreServiceNew implements Runnable {
 	}
 	
 	
-	private String openPosition(double last) {
+	private String openPosition() {
 		System.out.println("准备开仓，开仓张数："+String.valueOf(count*Integer.valueOf(amount)));
 		while(true) {
 			try {
@@ -198,11 +195,13 @@ public class CoreServiceNew implements Runnable {
 				double low = Math.abs(kline.getOpen()-kline.getLow());
 				double higth = Math.abs(kline.getOpen()-kline.getHigh());
 				if(Math.round(low/kline.getOpen()*100)>=openRate && orderDate!=kline.getDate()) {
-					System.out.println("low="+low+",计算结果="+low/kline.getOpen()*100);
+					double last = this.quotServiceImpl.ticker().getLast();
+					System.out.println("low="+low+",计算结果="+low/kline.getOpen()*100+",最新价格="+last);
 					orderDate = kline.getDate();
 					return this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("2", last), isDouble?String.valueOf(count*Integer.valueOf(amount)):amount, "2");
 				}else if(Math.round(higth/kline.getOpen()*100)>=openRate && orderDate!=kline.getDate()) {
-					System.out.println("higth="+higth+",计算结果="+higth/kline.getOpen()*100);
+					double last = this.quotServiceImpl.ticker().getLast();
+					System.out.println("higth="+higth+",计算结果="+higth/kline.getOpen()*100+",最新价格="+last);
 					orderDate = kline.getDate();
 					return this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("1", last), isDouble?String.valueOf(count*Integer.valueOf(amount)):amount, "1");
 				}
@@ -210,8 +209,6 @@ public class CoreServiceNew implements Runnable {
 			}catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("开仓失败!"+ e);
-				last = this.quotServiceImpl.ticker().getLast();
-				System.out.println("异常后获取到最新成交价:"+last);
 				this.quotServiceImpl.slip(1000*3);
 			}
 		}
