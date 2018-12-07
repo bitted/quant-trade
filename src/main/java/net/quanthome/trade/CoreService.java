@@ -68,6 +68,10 @@ public class CoreService implements Runnable {
 					continue;
 				}
 				String orderId = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("1", last), amount, "1");
+				if(orderId==null) {
+					System.out.println("下单失败!");
+					continue;
+				}
 				orderMonitor(orderId);
 				System.out.println("多仓开仓成功！");
 				monitorQuick();
@@ -99,7 +103,7 @@ public class CoreService implements Runnable {
 			System.out.println("开始监控仓位！");
 			while (true) {
 				try {
-					this.tradeServiceImpl.slip(1000*10);
+					this.tradeServiceImpl.slip(1000*5);
 	
 					Position position = this.tradeServiceImpl.position();
 					
@@ -122,6 +126,10 @@ public class CoreService implements Runnable {
 							System.out.println("收益回调达到指定比例，进行平仓操作["+buyLossratio+"]");
 							double last = this.quotServiceImpl.ticker().getLast();
 							String orderid = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("3", last), buyAmount + "", "3");
+							if(orderid==null) {
+								System.out.println("平多仓失败!");
+								continue;
+							}
 							orderMonitor(orderid);
 							this.maxIncome = 0.0D;
 							if(buyLossratio > 10){
@@ -138,8 +146,12 @@ public class CoreService implements Runnable {
 							if(openPositionTime()) {
 								break;
 							}
-							System.out.println(String.valueOf(count*Integer.valueOf(amount)));
+							System.out.println("开仓张数："+String.valueOf(count*Integer.valueOf(amount)));
 							orderid = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("2", last), isDouble?String.valueOf(count*Integer.valueOf(amount)):amount, "2");
+							if(orderid==null) {
+								System.out.println("开空仓失败！");
+								continue;
+							}
 							orderMonitor(orderid);
 							System.out.println("空仓开仓成功！");
 							monitorQuick();
@@ -152,6 +164,10 @@ public class CoreService implements Runnable {
 							System.out.println("收益回调达到指定比例，进行平仓操作["+sellLossratio+"]");
 							double last = this.quotServiceImpl.ticker().getLast();
 							String orderid = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("4", last), sellAmount + "", "4");
+							if(orderid==null) {
+								System.out.println("平空仓失败！");
+								continue;
+							}
 							orderMonitor(orderid);
 							this.maxIncome = 0.0D;
 							if(sellLossratio > 10){
@@ -168,10 +184,14 @@ public class CoreService implements Runnable {
 							if(openPositionTime()) {
 								break;
 							}
-							System.out.println(String.valueOf(count*Integer.valueOf(amount)));
+							System.out.println("准备开仓张数："+String.valueOf(count*Integer.valueOf(amount)));
 							orderid = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("1", last), isDouble?String.valueOf(count*Integer.valueOf(amount)):amount, "1");
+							if(orderid==null) {
+								System.out.println("开多仓失败！");
+								continue;
+							}
 							orderMonitor(orderid);
-							System.out.println("空仓开仓成功！");
+							System.out.println("多仓开仓成功！");
 							monitorQuick();
 						} 
 					} else {
