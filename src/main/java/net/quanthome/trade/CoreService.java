@@ -95,7 +95,7 @@ public class CoreService implements Runnable {
 		if(hour<startTime || hour>endTime) {
 			sdf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
 			sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));//指定时区
-			System.out.print("不在开仓时间段，不开仓，"+startTime+","+endTime+","+sdf.format(Calendar.getInstance().getTime())+"|");
+			System.out.print("不在开仓时间段,不开仓,"+startTime+","+endTime+","+sdf.format(Calendar.getInstance().getTime())+"|");
 			return true;
 		}else {
 			return false;
@@ -159,7 +159,7 @@ public class CoreService implements Runnable {
 							orderMonitor(orderid);
 							monitorQuick();
 						} else {
-							System.out.print("仓位收益："+buyLossratio+",回调收益："+backIncome +"仓位最大收益："+this.maxIncome+".");
+							System.out.print("仓位收益："+buyLossratio+",回调收益："+backIncome +"仓位最大收益："+this.maxIncome+"|");
 						}
 					} else if (sellAmount > 0){
 						if (sellLossratio > this.maxIncome) {
