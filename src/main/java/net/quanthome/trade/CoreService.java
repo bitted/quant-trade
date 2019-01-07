@@ -127,7 +127,20 @@ public class CoreService implements Runnable {
 							this.maxIncome = buyLossratio;
 							logger.info("多仓收益大于当前最大收益["+buyLossratio+"]");
 						} else if(buyLossratio+backIncome < this.maxIncome){
-							logger.info("收益回调达到指定比例，进行平仓操作["+buyLossratio+"]");
+							logger.info("收益回调达到指定比例，进行二次判断["+buyLossratio+"]");
+							this.tradeServiceImpl.slip(1000*5);
+							position = this.tradeServiceImpl.position();
+							if(position==null){
+								logger.info("仓位为空!");
+								break;
+							}
+							buyLossratio = position.getBuy_profit_lossratio();
+							if(buyLossratio+backIncome < this.maxIncome){
+								logger.info("二次判断收益回调依然超过指定比例，进行平仓操作["+buyLossratio+"]");
+							}else{
+								logger.info("二次判断收益回调未超过指定比例");
+								continue;
+							}
 							double last = this.quotServiceImpl.ticker().getLast();
 							String orderid = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("3", last), buyAmount + "", "3");
 							if(orderid==null) {
@@ -168,7 +181,20 @@ public class CoreService implements Runnable {
 							this.maxIncome = sellLossratio;
 							logger.info("持仓收益大于当前最大收益["+sellLossratio+"]");
 						} else if(sellLossratio+backIncome < this.maxIncome){
-							logger.info("收益回调达到指定比例，进行平仓操作["+sellLossratio+"]");
+							logger.info("收益回调达到指定比例，进行二次判断["+sellLossratio+"]");
+							this.tradeServiceImpl.slip(1000*5);
+							position = this.tradeServiceImpl.position();
+							if(position==null){
+								logger.info("仓位为空!");
+								break;
+							}
+							sellLossratio = position.getSell_profit_lossratio();
+							if(sellLossratio+backIncome < this.maxIncome){
+								logger.info("二次判断收益回调依然超过指定比例，进行平仓操作["+sellLossratio+"]");
+							}else{
+								logger.info("二次判断收益回调未超过指定比例");
+								continue;
+							}
 							double last = this.quotServiceImpl.ticker().getLast();
 							String orderid = this.tradeServiceImpl.trade(this.tradeServiceImpl.getOpenPrice("4", last), sellAmount + "", "4");
 							if(orderid==null) {
