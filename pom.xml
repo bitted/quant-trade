@@ -5,7 +5,7 @@
 
 	<groupId>net.quanthome</groupId>
 	<artifactId>quant-trade</artifactId>
-	<version>v6.4</version>
+	<version>v6.5</version>
 	<packaging>jar</packaging>
 
 	<name>quant-trade</name>

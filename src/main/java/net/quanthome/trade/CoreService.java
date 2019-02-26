@@ -173,8 +173,6 @@ public class CoreService implements Runnable {
 							}
 							orderMonitor(orderid);
 							monitorQuick();
-						} else {
-							System.out.print("仓位收益："+buyLossratio+",回调收益："+backIncome +"仓位最大收益："+this.maxIncome+"|");
 						}
 					} else if (sellAmount > 0){
 						if (sellLossratio > this.maxIncome) {
